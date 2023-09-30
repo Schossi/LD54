@@ -3,7 +3,7 @@ using Stride.Rendering;
 using Stride.Rendering.Compositing;
 using Stride.Rendering.UI;
 
-public static class Program
+static class Program
 {
     public static Game Game;
 
@@ -19,7 +19,10 @@ public static class Program
         var scene = Game.SceneSystem.SceneInstance.RootScene;
 
         setupCompositor();
-        Environment.Setup(scene);
+
+        scene.Entities.Add(Environment.Create());
+        scene.Entities.Add(SessionManager.Create());
+        scene.Entities.Add(UI.Create());
 
         while (true)
         {
@@ -29,7 +32,7 @@ public static class Program
 
     private static void setupCompositor()
     {
-        var compositor = GraphicsCompositorHelper.CreateDefault(true);
+        var compositor = GraphicsCompositorHelper.CreateDefault(false);
         var forwardRenderer = (ForwardRenderer)compositor.SingleView;
 
         var cameraSlot = compositor.Cameras[0];
