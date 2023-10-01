@@ -1,6 +1,5 @@
 ﻿using Stride.Core.Mathematics;
 using Stride.Engine;
-using Stride.Games;
 using Stride.Graphics;
 using Stride.UI;
 using Stride.UI.Controls;
@@ -10,10 +9,17 @@ public class UI : SyncScript
 {
     public static UI Instance { get; private set; }
 
+    public static Color COLOR_SPECIAL_COOLDOWN = new Color(130, 160, 216, 255);
+    public static Color COLOR_SPECIAL_READY = new Color(121, 172, 120, 255);
+    public static Color COLOR_SPECIAL_ACTIVE = new Color(190, 173, 250, 255);
+    public static Color COLOR_SPACE = new Color(239, 149, 149, 255);
+
     public UIElement StartButton { get; private set; }
     public UIElement SpecialBar { get; private set; }
     public UIElement SpaceBar { get; private set; }
     public TextBlock ScoreText { get; private set; }
+    public TextBlock HighscoreText { get; private set; }
+    public TextBlock TimeText { get; private set; }
     public TextBlock TitleText { get; private set; }
     public UIElement HelpText { get; private set; }
     public TextBlock TestText { get; private set; }
@@ -26,10 +32,35 @@ public class UI : SyncScript
         TitleText.Text = SessionManager.Instance.State == SessionManager.ManagerState.GameOver ? "Game Over" : "LD54";
 
         ScoreText.Text = GarbageFactory.Instance == null ? "0" : GarbageFactory.Instance.DestroyedCount.ToString();
-        SpecialBar.Height = Dozer.Instance == null ? 500 : Dozer.Instance.SpecialRatio * 500;
-        SpaceBar.Height = GarbageFactory.Instance == null ? 500 : GarbageFactory.Instance.SpaceRatio * 500;
+        HighscoreText.Text = SessionManager.Instance.Highscore.ToString();
+        SpaceBar.Height = GarbageFactory.Instance == null || !SessionManager.Instance.IsPlaying ? 500 : GarbageFactory.Instance.SpaceRatio * 500;
+
+        if (Dozer.Instance == null)
+        {
+            SpecialBar.Height = 500;
+            SpecialBar.BackgroundColor = COLOR_SPECIAL_COOLDOWN;
+        }
+        else
+        {
+            if (Dozer.Instance.IsSpecialActive)
+            {
+                SpecialBar.Height = Dozer.Instance == null ? 500 : Dozer.Instance.SpecialRatio * 500;
+                SpecialBar.BackgroundColor = COLOR_SPECIAL_ACTIVE;
+            }
+            else if (Dozer.Instance.IsSpecialReady)
+            {
+                SpecialBar.Height = 500;
+                SpecialBar.BackgroundColor = COLOR_SPECIAL_READY;
+            }
+            else
+            {
+                SpecialBar.Height = Dozer.Instance == null ? 500 : Dozer.Instance.SpecialRatio * 500;
+                SpecialBar.BackgroundColor = COLOR_SPECIAL_COOLDOWN;
+            }
+        }
 
         TestText.Text = Program.Game.UpdateTime.FramePerSecond.ToString();
+        TimeText.Text = SessionManager.Instance.SessionTime.ToString("F0");
     }
 
     public static Entity Create()
@@ -60,7 +91,7 @@ public class UI : SyncScript
 
         var specialBar = new Border()
         {
-            BackgroundColor = Color.Blue,
+            BackgroundColor = COLOR_SPECIAL_COOLDOWN,
             VerticalAlignment = VerticalAlignment.Bottom,
             Height = 500
         };
@@ -79,7 +110,7 @@ public class UI : SyncScript
 
         var spaceBar = new Border()
         {
-            BackgroundColor = Color.Red,
+            BackgroundColor = COLOR_SPACE,
             VerticalAlignment = VerticalAlignment.Bottom,
             Height = 500
         };
@@ -103,6 +134,25 @@ public class UI : SyncScript
             TextSize = 40,
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
+            Margin = new Thickness(0, 7, 0, 0),
+            Font = font
+        };
+        var timeText = new TextBlock
+        {
+            Text = "0",
+            TextColor = Color.White,
+            TextSize = 16,
+            HorizontalAlignment = HorizontalAlignment.Right,
+            VerticalAlignment = VerticalAlignment.Top,
+            Font = font
+        };
+        var highscoreText = new TextBlock
+        {
+            Text = "0",
+            TextColor = Color.White,
+            TextSize = 16,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top,
             Font = font
         };
         var scoreBorder = new Border()
@@ -115,7 +165,7 @@ public class UI : SyncScript
             Margin = new Thickness(0, 10, 0, 0),
             Height = 60,
             Width = 120,
-            Content = scoreText
+            Content = Utilities.CreateGrid(scoreText, timeText, highscoreText)
         };
 
         button.Click += (s, e) =>
@@ -174,6 +224,8 @@ public class UI : SyncScript
             SpecialBar = specialBar,
             SpaceBar = spaceBar,
             ScoreText = scoreText,
+            HighscoreText = highscoreText,
+            TimeText = timeText,
             TitleText = titleText,
             HelpText = helpText,
             TestText = testText,

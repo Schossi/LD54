@@ -9,6 +9,49 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Box.blend" />
+    <None Remove="Resources\Box.blend1" />
+    <None Remove="Resources\Box.fbx" />
+    <None Remove="Resources\destroy.wav" />
+    <None Remove="Resources\Dozer.blend" />
+    <None Remove="Resources\Dozer.blend1" />
+    <None Remove="Resources\Dozer.fbx" />
+    <None Remove="Resources\drop.wav" />
+    <None Remove="Resources\move.wav" />
+    <None Remove="Resources\moveSpecial.wav" />
+    <None Remove="Resources\moveStep.wav" />
+    <None Remove="Resources\Palette.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\Box.fbx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\destroy.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Dozer.fbx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\drop.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\move.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\moveSpecial.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\moveStep.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Palette.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="Stride.Core.Assets.CompilerApp" Version="4.1.0.1898" />
     <PackageReference Include="Stride.Engine" Version="4.1.0.1898" />
     <PackageReference Include="Stride.Physics" Version="4.1.0.1898" />

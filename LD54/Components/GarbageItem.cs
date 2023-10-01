@@ -1,22 +1,29 @@
 ﻿using Stride.Engine;
+using Stride.Physics;
+using Stride.Rendering;
 
 class GarbageItem : SyncScript
 {
     public override void Update()
     {
-        if (Entity.Transform.Position.Y < -1)
+        if (Entity.Transform.Position.Y < -1f || Entity.Transform.Position.Z > 7f)
         {
             GarbageFactory.Instance.RemoveItem(this);
         }
     }
 
-    public static Entity Create()
+    public void SpecialRemove()
     {
-        var game = Program.Game;
+        GarbageFactory.Instance.RemoveItem(this);
+    }
 
-        var debugCube = game.CreatePrimitive(Utilities.PrimitiveModelType.Cube);
-        debugCube.Add(new GarbageItem());
+    public static Entity Create(Model model)
+    {
+        var collider = new RigidbodyComponent();
+        collider.ColliderShapes.Add(new BoxColliderShapeDesc());
 
-        return debugCube;
+        var entity = new Entity("Item") { new ModelComponent(model), collider, new GarbageItem() };
+
+        return entity;
     }
 }

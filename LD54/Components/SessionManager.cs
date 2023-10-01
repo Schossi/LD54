@@ -8,6 +8,7 @@ class SessionManager : SyncScript
 
     public ManagerState State { get; private set; }
     public float SessionTime { get; private set; }
+    public int Highscore { get; private set; }
     public bool IsPlaying => State == ManagerState.Playing;
 
     public event Action<ManagerState> StateChanged;
@@ -17,6 +18,11 @@ class SessionManager : SyncScript
         if (State == ManagerState.Playing)
         {
             SessionTime += Game.DeltaTime();
+        }
+        else
+        {
+            if (Input.IsKeyDown(Stride.Input.Keys.Enter) || Input.IsKeyDown(Stride.Input.Keys.E))
+                StartSession();
         }
     }
 
@@ -28,6 +34,7 @@ class SessionManager : SyncScript
             Entity.RemoveChild(GarbageFactory.Instance.Entity);
 
         changeState(ManagerState.Playing);
+        SessionTime = 0f;
 
         Entity.AddChild(Dozer.Create());
         Entity.AddChild(GarbageFactory.Create());
@@ -35,6 +42,8 @@ class SessionManager : SyncScript
     public void EndSession()
     {
         changeState(ManagerState.GameOver);
+
+        Highscore = Math.Max(Highscore, GarbageFactory.Instance.DestroyedCount);
     }
 
     private void changeState(ManagerState state)
